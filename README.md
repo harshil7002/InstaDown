@@ -1,16 +1,38 @@
 # InstaDo
 
-Current app version: **1.3** (`versionCode` 3).
+Current app version: **1.4** (`versionCode` 4).
 
-InstaDo is a native Android application concept for downloading Instagram-related media through a URL paste workflow. The app is designed for mobile-first use with a professional glassmorphism interface, dark/light themes, minimal animations, and swipe navigation between Home, Gallery, and Settings.
+InstaDo is a native Android application concept for downloading Instagram-related media through a URL paste workflow. The app is mobile-first, opens directly to Home without a splash/loading page, and keeps all saved records on the device.
 
-## Core behavior
+## Platform targets
 
-- **Home download workflow:** Paste an Instagram URL or import it from the clipboard, preview the URL type, then save the URL locally or download direct media links with Android DownloadManager.
-- **No opening loading page:** The main activity renders the Home page immediately.
-- **Local-only storage:** URL history and preview fingerprints are stored on-device in SharedPreferences; downloaded files are sent to `Downloads/InstaDo`.
-- **Gallery integration:** The Gallery page reads Android MediaStore so files in the InstaDo folder can appear in both the app and the phone gallery.
-- **Permissions:** Settings includes an allow/disallow dialog explaining gallery and storage permissions before requesting Android runtime permissions.
-- **Data mismatch indicator:** Repeated URL records are fingerprinted locally so the app can mark when saved preview data differs from an earlier record for the same URL.
+- Android only.
+- Minimum SDK: Android 8.0 / API 26.
+- Target SDK: Android 16 / API 36.
+- Storage: local phone storage only; no cloud storage and no external server for saved files.
 
-> Note: Instagram page URLs often require platform-side extraction, account context, or authorization. This project avoids cloud servers and does not bypass Instagram controls; direct media URLs can be handed to Android DownloadManager, while page URLs are stored and flagged for verification.
+## Implemented app flow
+
+- **Home downloader:** large Instagram URL paste box, smart clipboard detection popup, clear button, download actions for video/audio/image, quality selector, preview card, warning for source/preview mismatch, recent downloads, and a local multi-download queue view.
+- **Gallery:** reads Android MediaStore and displays InstaDo-only media from `Downloads/InstaDo`, with search, media-type filtering, and newest/oldest/size sorting.
+- **Settings:** dark/light/system theme selection, storage stats, clear cache, delete all downloads request, download-folder note, permission management, privacy placeholders, and app preferences for auto-paste, auto-download, WiFi-only downloads, and notifications.
+- **Permissions:** in-app allow/deny explanation dialogs for media storage and notifications on newer Android releases.
+- **Error handling:** user-facing messages distinguish invalid Instagram URLs, unsupported URLs, private/deleted/unavailable content guidance, and network errors.
+
+## Local storage layout
+
+Direct media downloads are queued through Android DownloadManager under:
+
+```text
+Downloads/
+└── InstaDo/
+    ├── Reels
+    ├── Stories
+    ├── Posts
+    ├── Images
+    └── Audio
+```
+
+## Important limitation
+
+Instagram page URLs often require source-side extraction, account context, or authorization. This project avoids cloud servers and does not bypass Instagram controls. Direct media URLs can be handed to Android DownloadManager, while Instagram page URLs are previewed and tracked locally so users can verify content before downloading.
